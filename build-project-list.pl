@@ -95,6 +95,13 @@ my $site_info = {
                                                     README.mkdn
                                                     README.mkd
                                                     README.markdown
+                                                    README.mkdown
+                                                    README.ron
+                                                    README.rst
+                                                    README.rest
+                                                    README.asciidoc
+                                                    README.adoc
+                                                    README.asc
                                                  /;
 
 		$project ->{badge_has_readme} = scalar(@readmes) ? "http://github.com/$project->{auth}/$project->{repo_name}/blob/master/$readmes[0]" : undef;
