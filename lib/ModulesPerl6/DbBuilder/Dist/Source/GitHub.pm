@@ -64,7 +64,7 @@ sub load {
     for ($commit_request->response) {
         my $remaining = $_->header('X-RateLimit-Remaining');
         my $refresh   = $_->header('X-RateLimit-Reset') - time;
-        if $remaining < 5 {
+        if ($remaining < 5) {
             log info => "Sleeping for $refresh seconds for the rate limit";
             sleep $refresh;
         }
