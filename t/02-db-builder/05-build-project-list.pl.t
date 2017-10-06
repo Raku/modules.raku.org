@@ -26,7 +26,6 @@ diag 'Running build on 2 dists (might take a while)';
 my $out;
 script_runs [
     'bin/build-project-list.pl',
-    '--interval=0',
     "--meta-list=$meta_list",
     "--db-file=$db_file",
     "--logos-dir=$logos_dir",

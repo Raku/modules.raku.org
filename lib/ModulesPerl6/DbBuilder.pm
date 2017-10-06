@@ -24,7 +24,6 @@ use constant CPAN_RSYNC_URL => 'cpan-rsync.perl.org::CPAN/authors/id';
 use constant LOCAL_CPAN_DIR => 'dists-from-CPAN';
 
 has [qw/_app  _db_file  _logos_dir/] => Str;
-has -_interval    => PositiveOrZeroNum;
 has -_limit       => Maybe[ PositiveNum ];
 has -_restart_app => Maybe[ Bool ];
 has -_no_p6c      => Maybe[ Bool ];
@@ -70,13 +69,6 @@ sub run {
                 dist_db   => $self->_model_dists,
             )->info or die "Failed to build dist\n";
             $self->_model_dists->add( $dist );
-
-            # This interval, when defaulted to at least 5, prevents us from
-            # going over GitHub's rate-limit of 5,000 requests per hour.
-            # This should likely be moved/adjusted when we have more Dist
-            # Sources or if we starting making more/fewer API requests per dist
-            sleep $self->_interval // 0
-                unless $dist->{meta_url} =~ m{cpan://};
         }
         catch {
             log error=> "Received fatal error while building $metas[$idx]: $_";

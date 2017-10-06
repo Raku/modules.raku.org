@@ -35,7 +35,6 @@ subtest 'failing dist build (META file fetch fail)' => sub {
         my $b = ModulesPerl6::DbBuilder->new(
             app         => 'whatever',
             db_file     => $db_file->filename,
-            interval    => 0,
             limit       => undef,
             logos_dir   => $logos_dir,
             meta_list   => $meta_list->filename,

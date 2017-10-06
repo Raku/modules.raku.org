@@ -24,7 +24,6 @@ exit_if_another_run_is_active();
 
 my $meta_list         = META_LIST_FILE;
 my $github_token_file = GITHUB_TOKEN_FILE;
-my $interval          = 0;
 my $logos_dir         = LOGOS_DIR;
 my $db_file           = DB_FILE;
 
@@ -32,7 +31,6 @@ GetOptions(
     'db-file=s'           => \$db_file,
     'github-token-file=s' => \$github_token_file,
     'help|?'              => \my $help,
-    'interval=i'          => \$interval,
     'man'                 => \my $man,
     'meta-list=s'         => \$meta_list,
     'limit=i'             => \my $limit,
@@ -49,7 +47,6 @@ $ENV{MODULES_PERL6_GITHUB_TOKEN_FILE} = $github_token_file;
 ModulesPerl6::DbBuilder->new(
     app         => APP,
     db_file     => $db_file,
-    interval    => $interval,
     limit       => $limit,
     logos_dir   => $logos_dir,
     meta_list   => $meta_list,
@@ -107,7 +104,6 @@ __END__
    --db-file=FILE
    --github-token-file=FILE
    --help
-   --interval=N
    --limit=N
    --logos_dir=DIR
    --man
