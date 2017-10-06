@@ -24,7 +24,7 @@ exit_if_another_run_is_active();
 
 my $meta_list         = META_LIST_FILE;
 my $github_token_file = GITHUB_TOKEN_FILE;
-my $interval          = 1;
+my $interval          = 0;
 my $logos_dir         = LOGOS_DIR;
 my $db_file           = DB_FILE;
 

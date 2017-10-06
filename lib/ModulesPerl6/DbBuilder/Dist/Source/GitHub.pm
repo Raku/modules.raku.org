@@ -64,8 +64,14 @@ sub load {
     for ($commit_request->response) {
         my $remaining = $_->header('X-RateLimit-Remaining');
         my $refresh   = $_->header('X-RateLimit-Reset') - time;
-        log info => "Rate limiter info: $remaining requests remaining "
-            . "(reset in $refresh seconds)";
+        if $remaining < 5 {
+            log info => "Sleeping for $refresh seconds for the rate limit";
+            sleep $refresh;
+        }
+        else {
+            log info => "Rate limiter info: $remaining requests remaining "
+                . "(reset in $refresh seconds)";
+        }
     }
 
     %$dist      = (
