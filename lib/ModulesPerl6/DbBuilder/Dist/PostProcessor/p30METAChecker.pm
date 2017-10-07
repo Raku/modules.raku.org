@@ -34,6 +34,7 @@ sub _check_todo_problems {
         push @problems, problem 'Missing MANIFEST file', 3
             if $dist->{dist_source} eq 'cpan'
                 and not grep $_ eq 'MANIFEST', @files;
+        push @problems, $self->_check_todo_problem_travis_yml($dist, \@files);
     }
     else {
         # If we're here that can mean the dist was processed in abridged,
@@ -106,6 +107,22 @@ sub _check_meta_url {
     log +( $code == 200 ? 'info' : 'error' ),
         "HTTP $code when accessing dist source URL ($dist->{url})";
 }
+
+sub _check_todo_problem_travis_yml {
+    my ($self, $dist, $files) = @_;
+
+    my ($travisyml) = grep $_->{name} =~ /^.travis.yml/i, @$files
+        or return;
+
+    # If we failed to fetch the travis yml content, return any cached travis
+    # problems.
+    return grep $_->{problem} =~ /\bTravis-CI\b/, ($dist->{problems} || [])->@*
+        if $travisyml->{error};
+
+    return unless $travisyml->{content} =~ /\brakudobrew\s+build[- ]panda\b/;
+    problem 'Travis-CI config asks rakudobrew to build panda.', 3
+}
+
 
 1;
 
