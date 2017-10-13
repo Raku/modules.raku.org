@@ -61,11 +61,6 @@ sub load {
     return $dist;
 }
 
-sub _to_file_tree {
-    my ($self, @files) = @_;
-
-}
-
 sub _extract {
     my ($self, $file, $dist_dir) = @_;
     my $base = $file =~ s/.meta$//r;
