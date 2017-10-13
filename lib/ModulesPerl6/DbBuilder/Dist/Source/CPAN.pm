@@ -85,7 +85,7 @@ sub _extract {
     make_path   $dist_dir;
     -d $dist_dir or return [];
 
-    my $extraction_dir = tempdir;
+    my $extraction_dir = tempdir CLEANUP => 1;
     $archive->extract($extraction_dir);
 
     my @files;
