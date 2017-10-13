@@ -163,6 +163,10 @@ sub _cpan_metas {
     for (@metas) { # bunch up different versions of the same dist together
         my ($file, $dir) = fileparse $_, '.meta';
         my ($name, $version) = $file =~ /(.+)-([^-]+)$/;
+        unless (length $name and length $version) {
+            log warn => "Could not figure out name and version for dist: $_";
+            next;
+        }
         $metas{$name}{dir} = $dir;
         push $metas{$name}{versions}->@*, $version;
     }
