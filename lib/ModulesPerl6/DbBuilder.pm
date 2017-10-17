@@ -28,6 +28,7 @@ has -_limit       => Maybe[ PositiveNum ];
 has -_restart_app => Maybe[ Bool ];
 has -_no_p6c      => Maybe[ Bool ];
 has -_no_cpan     => Maybe[ Bool ];
+has -_no_rsync    => Maybe[ Bool ];
 has _meta_list    => Str;
 has _model_build_stats => (
     is      => 'lazy',
@@ -127,23 +128,28 @@ sub _metas {
 sub _cpan_metas {
     my $self = shift;
 
-    log info => 'rsyncing CPAN dists from ' .CPAN_RSYNC_URL;
-    my @command = (qw{
-        /usr/bin/rsync  --prune-empty-dirs  -av
-        --exclude="/id/P/PS/PSIXDISTS/Perl6"
-        --include="/id/*/*/*/Perl6/"
-        --include="/id/*/*/*/Perl6/*.meta"
-        --include="/id/*/*/*/Perl6/*.tar.gz"
-        --include="/id/*/*/*/Perl6/*.tgz"
-        --include="/id/*/*/*/Perl6/*.zip"
-        --exclude="/id/*/*/*/Perl6/*"
-        --exclude="/id/*/*/*/*"
-        --exclude="id/*/*/CHECKSUMS"
-        --exclude="id/*/CHECKSUMS"
-    }, CPAN_RSYNC_URL, LOCAL_CPAN_DIR);
-    qx/@command/;
-    log info => 'rsync done; searching for META files';
-
+    if ($self->_no_rsync) {
+        log info => '--no-rsync option used; skipping rsync; '
+            . 'searching for META files';
+    }
+    else {
+        log info => 'rsyncing CPAN dists from ' .CPAN_RSYNC_URL;
+        my @command = (qw{
+            /usr/bin/rsync  --prune-empty-dirs  -av
+            --exclude="/id/P/PS/PSIXDISTS/Perl6"
+            --include="/id/*/*/*/Perl6/"
+            --include="/id/*/*/*/Perl6/*.meta"
+            --include="/id/*/*/*/Perl6/*.tar.gz"
+            --include="/id/*/*/*/Perl6/*.tgz"
+            --include="/id/*/*/*/Perl6/*.zip"
+            --exclude="/id/*/*/*/Perl6/*"
+            --exclude="/id/*/*/*/*"
+            --exclude="id/*/*/CHECKSUMS"
+            --exclude="id/*/CHECKSUMS"
+        }, CPAN_RSYNC_URL, LOCAL_CPAN_DIR);
+        qx/@command/;
+        log info => 'rsync done; searching for META files';
+    }
 
     my @metas;
     find sub {

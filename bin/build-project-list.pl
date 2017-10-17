@@ -38,6 +38,7 @@ GetOptions(
     'restart-app'         => \my $restart_app,
     'no-p6c|?'            => \my $no_p6c,
     'no-cpan|?'           => \my $no_cpan,
+    'no-rsync|?'          => \my $no_rsync,
 ) or pod2usage 2;
 
 pod2usage 1 if $help;
@@ -53,6 +54,7 @@ ModulesPerl6::DbBuilder->new(
     restart_app => $restart_app,
     no_p6c      => $no_p6c,
     no_cpan     => $no_cpan,
+    no_rsync    => $no_rsync,
 )->run;
 
 
