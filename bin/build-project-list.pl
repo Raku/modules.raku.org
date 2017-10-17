@@ -112,6 +112,9 @@ __END__
    --meta-list=FILE
    --meta-list=URL
    --restart-app
+   --no-p6c
+   --no-cpan
+   --no-rsync
 
    Short form (first letter of the option or more when need to disambiguate):
    -d=FILE
@@ -174,6 +177,18 @@ C<https://raw.githubusercontent.com/perl6/ecosystem/master/META.list>
 
 If specified, the script will restart the Mojolicious front-end app, once
 the database build completes.
+
+=item B<--no-p6c>
+
+Do not process p6c ecosystem (the GitHub-/GitLab-based one).
+
+=item B<--no-cpan>
+
+Do not process CPAN ecosystem.
+
+=item B<--no-rsync>
+
+Do not C<rsync> fresh CPAN dists from CPAN. Implied when C<--no-cpan> is used.
 
 =back
 
