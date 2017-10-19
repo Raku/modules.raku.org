@@ -120,7 +120,6 @@ __END__
    -d=FILE
    -g=FILE
    -h
-   -i=N
    -li=N
    -lo=DIR
    -ma
@@ -146,12 +145,6 @@ B<Defaults to:> C<github-token> in the current directory.
 =item B<--help>
 
 Print a brief help message and exits.
-
-=item B<--inteval=N>
-
-Pause for C<N> seconds after building each dist (value of zero is acceptable).
-B<Defaults to> 5 seconds, which is just enough to prevent going over GitHub's
-rate-limit of 5,000 requests per hour, when script is running continuously.
 
 =item B<--limit=N>
 
