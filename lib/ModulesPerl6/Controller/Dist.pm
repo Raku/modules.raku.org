@@ -2,6 +2,7 @@ package ModulesPerl6::Controller::Dist;
 
 use File::Glob qw/bsd_glob :nocase/;
 use File::Spec::Functions qw/catfile  splitdir/;
+use List::UtilsBy qw/uniq_by/;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::DOM;
 use Mojo::JSON qw/from_json/;
@@ -34,6 +35,8 @@ sub _fetch_dist {
         name => $wanted,
         ($from   ? (dist_source => $from  ) : ()),
         ($author ? (author_id   => $author) : ()),
+    })->uniq(sub {
+        join "\0", map defined||'', @$_{qw/name  from author/}
     });
 
     return $self->reply->not_found unless $dists->@*;
