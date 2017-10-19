@@ -319,6 +319,10 @@ footer:hover {
     border: 1px solid #eee;
     height: auto;
     margin-bottom: 20px;
+
+    :target {
+        background: #FF0;
+    }
 }
 
 .back-button {
