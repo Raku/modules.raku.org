@@ -36,7 +36,7 @@ sub _fetch_dist {
         ($from   ? (dist_source => $from  ) : ()),
         ($author ? (author_id   => $author) : ()),
     })->uniq(sub {
-        join "\0", map defined||'', @$_{qw/name  from author/}
+        join "\0", map $_//'', @$_{qw/name  from author/}
     });
 
     return $self->reply->not_found unless $dists->@*;
