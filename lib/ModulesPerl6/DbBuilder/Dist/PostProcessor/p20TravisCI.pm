@@ -31,24 +31,24 @@ sub process {
     my ( $user, $repo ) = $dist->{_builder}->@{qw/repo_user  repo/};
     return unless length $user and length $repo;
 
-    my @builds = eval {
+    my @repo = eval {
         Mojo::UserAgent->new( max_redirects => 5 )->get(
-            "https://api.travis-ci.org/repos/$user/$repo/builds"
+            "https://api.travis-ci.org/repos/$user/$repo"
             => { Accept => 'application/vnd.travis-ci.2+json' }
-        )->result->json->{builds}->@*;
+        )->result->json->{repo}->@*;
     }; if ( $@ ) { log error => "Error fetching travis status: $@"; return; }
 
-    $dist->{travis_status} = $self->_get_travis_status( @builds );
+    $dist->{travis_status} = $self->_get_travis_status( @repo );
     log info => "Determined travis status is $dist->{travis_status}";
 
     return 1;
 }
 
 sub _get_travis_status {
-    my ( $self, @builds ) = @_;
+    my ( $self, @repo ) = @_;
 
-    return 'unknown' unless @builds;
-    my $state = $builds[0]->{state};
+    return 'unknown' unless @repo;
+    my $state = $repo->{last_build_state};
 
     return 'pending' if $state =~ /cancel|pend/;
     return 'error'   if $state =~ /error/;
