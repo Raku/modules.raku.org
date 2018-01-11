@@ -19,6 +19,16 @@ use constant MODULES => c
         name        => 'Pod::To::Text',
         description => 'Render POD as Text',
         url         => 'https://docs.perl6.org/language/pod#Text',
+    },
+    {
+        name        => 'Telemetry',
+        description => 'Collect performance state for analysis',
+        url         => 'https://docs.perl6.org/type/Telemetry',
+    },
+    {
+        name        => 'snapper',
+        description => 'Start a thread taking repeated system state snapshots',
+        url         => 'https://docs.perl6.org/type/Telemetry#module_snapper',
     };
 
 sub __clone {
