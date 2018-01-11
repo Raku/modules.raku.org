@@ -12,8 +12,8 @@
   <div class="panel-body">
     <h4><kbd>from:github</kbd></h4>
     <p>Limit search results to a particular dist
-      source. Valid values are <code>github</code> and <code>gitlab</code>,
-      with <code>cpan</code> planned to be available in the future.</p>
+      source. Valid values are <code>github</code>, <code>gitlab</code>,
+      <code>cpan</code>, and <code>core</code>.</p>
     <p>Example: <code><a
       href="<%= url_for('search')->query('q' => 'Test from:github') %>"
       >WWW from:github</a></code> or <code><a
