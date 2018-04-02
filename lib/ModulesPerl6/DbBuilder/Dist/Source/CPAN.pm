@@ -13,7 +13,8 @@ use List::Util qw/uniq/;
 use ModulesPerl6::DbBuilder::Log;
 use Mew;
 use Mojo::File qw/path/;
-use Mojo::JSON qw/to_json/;
+use Mojo::JSON qw/to_json  from_json/;
+use Mojo::URL;
 use Text::FileTree;
 use experimental 'postderef';
 
@@ -49,13 +50,35 @@ sub load {
     $dist->{name} ||= $basename =~ s/-[^-]+$//r;
 
     my @files = $self->_extract($file, catfile UNPACKED_DISTS, $dist_dir);
-    $dist->{files} = to_json +{
+    $dist->{files} = +{
         files_dir => $dist_dir,
         files     => Text::FileTree->new->parse(
             join "\n", map { catfile grep length, splitdir $_ } @files
         ),
     };
-
+    if ($dist->{files}{files}{'META6.json'}) {
+        my $meta_file = catfile UNPACKED_DISTS, $dist_dir, 'META6.json';
+        if (-f $meta_file and -r _) {
+            my $meta = eval { from_json path($meta_file)->slurp };
+            if ($@) {
+                log error =>
+                    "Found META6.json file but could not read/decode: $@"
+            }
+            else {
+                $dist->{repo_url}
+                     = $meta->{'source-url'}
+                    // $meta->{'repo-url'}
+                    // $meta->{support}{source}
+                    // $dist->{url};
+                if ($dist->{repo_url}) {
+                    $dist->{repo_url} = Mojo::URL->new(
+                        $dist->{repo_url}
+                    )->scheme('https')
+                }
+            }
+        }
+    }
+    $dist->{files} = to_json $dist->{files};
     $dist->{_builder}{post}{no_meta_checker} = 1;
 
     return $dist;

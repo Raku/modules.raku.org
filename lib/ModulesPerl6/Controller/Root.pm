@@ -139,7 +139,7 @@ sub repo {
     return $self->reply->not_found
         unless $dist = $self->dists->find({name => $dist})->first;
 
-    return $self->redirect_to( $dist->{url} );
+    return $self->redirect_to( $dist->{repo_url} );
 }
 
 1;

@@ -75,7 +75,7 @@ sub _parse_meta {
     eval { $data->$json };
     if ( $@ ) { log error => "Failed to parse: JSON error: $@"; return; }
 
-    $json->{url}
+    $json->{repo_url} = $json->{url}
              = $json->{'source-url'}
             // $json->{'repo-url'}
             // $json->{support}{source};

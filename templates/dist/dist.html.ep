@@ -10,6 +10,14 @@
 
 <h2><%= $dist->{name} %>
   <small><%= $dist->{dist_source} %>:<%= $dist->{author_id} %>
+    <a href="<%= $dist->{url} %>" class="btn btn-sm btn-default"
+      title="Dist source" data-toggle="tooltip"
+    ><i class="source-<%= $dist->{dist_source} %>"></i></a>
+    % if ($dist->{repo_url} ne $dist->{url}) {
+      <a href="<%= $dist->{repo_url} %>" class="btn btn-sm btn-default"
+        title="Dist repository" data-toggle="tooltip"
+      ><i class="source-<%= url_icon_for $dist->{repo_url} %>"></i></a>
+    % }
     <small>last updated on <%= $dist->{date_updated_human} %></small>
   </small>
 </h2>

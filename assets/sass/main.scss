@@ -181,8 +181,8 @@ footer:hover {
             list-style: none;
             display: inline-block;
         }
-        li:last-child a:last-child {
-            color: $text-color-body;
+        [class^="source"] + a {
+            color: $text-color-body!important;
         }
         li:first-child {
             width: 3.5em;

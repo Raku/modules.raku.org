@@ -88,7 +88,7 @@ sub add {
             },
             dist_build_id => { id => $dist->{build_id} },
             (map +( $_ => $dist->{$_} ),
-                qw/name  meta_url  url  description  stars  issues
+                qw/name  meta_url  url  repo_url  description  stars  issues
                     date_updated  date_added  appveyor_url  files/,
             ),
         });

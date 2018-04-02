@@ -110,6 +110,12 @@
           <a href="<%= url_for('search')->query(
               q => 'author:"' . $dist->{author_id} . '"'
             ) %>"><%= $dist->{author_id} %></a></li>
+        % if ($dist->{repo_url} ne $dist->{url}) {
+          <li title="Dist repository" data-toggle="tooltip"
+            ><a href="<%= $dist->{repo_url} %>">
+              <i class="source-<%= url_icon_for $dist->{repo_url} %>"></i></a>
+          </li>
+        % }
       </ul>
 
       % if (items_in $dist->{tags}) {
