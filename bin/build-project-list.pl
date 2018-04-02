@@ -12,15 +12,12 @@ use Mojo::File qw/path/;
 use lib qw/lib/;
 use ModulesPerl6::DbBuilder;
 
-use constant FULL_REBUILD_MARK_FILE => 'do-full-rebuild-next-time';
 use constant DB_FILE           => 'modulesperl6.db';
 use constant GITHUB_TOKEN_FILE => 'github-token';
 use constant APP               => 'bin/ModulesPerl6.pl';
 use constant LOGOS_DIR         => catdir  qw/public  content-pics  dist-logos/;
 use constant META_LIST_FILE    => 'https://raw.githubusercontent.com'
                                     . '/perl6/ecosystem/master/META.list';
-
-exit_if_another_run_is_active();
 
 my $meta_list         = META_LIST_FILE;
 my $github_token_file = GITHUB_TOKEN_FILE;
@@ -56,37 +53,6 @@ ModulesPerl6::DbBuilder->new(
     no_cpan     => $no_cpan,
     no_rsync    => $no_rsync,
 )->run;
-
-
-sub exit_if_another_run_is_active {
-    my $file = path FULL_REBUILD_MARK_FILE;
-    my $mark = 'ModulesPerl6Org full build marker file';
-
-    ### This flock exists to allow only one copy of the script to run at a time
-    unless ( flock DATA, LOCK_EX | LOCK_NB ) {
-        print "Found duplicate script run. Stopping\n"
-          if $ENV{MODULESPERL6_DEBUG};
-
-        # did previous run wanted us to do a full rebuild, leave a marker
-        # file around so that the next run knows to do the full rebuild
-
-        $file->spurt("$mark; created on " . localtime)
-            if $ENV{FULL_REBUILD} and not -e $file;
-
-        exit -1;
-    }
-
-    if (-e $file and $file->slurp =~ /^\Q$mark\E/) {
-        unlink $file;
-        $ENV{FULL_REBUILD} = 1;
-    }
-}
-
-### DO NOT REMOVE THE FOLLOWING LINES from __DATA__ ###
-### This exists to allow only one copy of the script to run at a time
-__DATA__
-This exists to allow the locking code at the beginning of the file to work.
-DO NOT REMOVE THESE LINES!
 
 __END__
 
