@@ -83,6 +83,12 @@ sub startup {
             dist => "$d->{name}:$d->{dist_source}:$d->{author_id}",
             @args);
     });
+    $self->helper( raw_url_for => sub {
+        my ($c, $d, @args) = @_;
+        $c->url_for(raw =>
+            dist => "$d->{name}:$d->{dist_source}:$d->{author_id}",
+            @args);
+    });
 
     # ROUTES
     my $r = $self->routes;

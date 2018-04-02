@@ -21,6 +21,10 @@
           ><i class="glyphicon glyphicon-arrow-left"></i></a>
       % }
 % if (stash 'show_file') {
+      <a href="<%= raw_url_for $dist, file => $file %>"
+        class="btn btn-default btn-sm pull-right"
+        title="View raw file" data-toggle="tooltip"
+        ><i class="glyphicon glyphicon-circle-arrow-down"></i> </a>
       <%= $file_prefix %>
     </div>
     <div class="code-mirror" data-highlight-type="<%= stash 'file_type' %>">
