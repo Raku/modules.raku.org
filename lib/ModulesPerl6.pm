@@ -79,8 +79,8 @@ sub startup {
     });
     $self->helper(url_icon_for => sub {
         my ($self, $url) = @_;
-          $url ~~ m{//github\.com/[^/]+/[^/]+} ? 'github'
-        : $url ~~ m{//gitlab\.com/[^/]+/[^/]+} ? 'gitlab'
+          $url =~ m{//github\.com/[^/]+/[^/]+} ? 'github'
+        : $url =~ m{//gitlab\.com/[^/]+/[^/]+} ? 'gitlab'
         : 'unknown'
     });
     $self->helper( dist_url_for => sub {
