@@ -78,6 +78,7 @@ sub load {
         %$dist,
         dist_source => 'github',
         url         => $repo->{html_url},
+        repo_url    => $repo->{html_url},
         issues      => $repo->{open_issues_count} // 0,
         stars       => $repo->{stargazers_count}  // 0,
     );
