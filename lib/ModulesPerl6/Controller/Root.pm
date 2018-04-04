@@ -36,7 +36,11 @@ sub search {
     my @dists;
     my $core_dists = c;
     my $opts;
-    if (length (my $q = $self->param('q'))) {
+    my $q = $self->param('q') // '';
+    $q =~ s/^\s+//;
+    $q =~ s/\s+\z//;
+
+    if (length $q) {
         ($opts, my $q) = $self->_parse_search_options($q);
 
         @dists = length $q
