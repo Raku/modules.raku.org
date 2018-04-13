@@ -74,6 +74,9 @@ sub search {
             : 'N/A';
 
         $_->{travis_url} = Mojo::URL->new($_->{url})->host('travis-ci.org');
+        $_->{mpo6_dist_url} = $self->url_for(
+            dist => dist => "$_->{name}:$_->{dist_source}:$_->{author_id}"
+        )->to_abs,
     }
 
     my $active_tag = uc($self->param('tag') // '');
