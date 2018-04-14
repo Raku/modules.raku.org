@@ -144,6 +144,9 @@ sub __postprocess_markdown_render {
     $dom->find('h1,h2,h3,h4,h5,h6')->each(sub {
         $_->{id} = lc $_->all_text =~ s/\W/-/gr;
     });
+    $dom->find('table')->each(sub {
+        $_->{class} = 'table table-bordered';
+    });
 
     $dom->find('script,style')->each(sub {
         $_->remove
