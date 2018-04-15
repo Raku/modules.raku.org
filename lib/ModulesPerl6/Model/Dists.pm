@@ -77,6 +77,8 @@ sub add {
         $dist->{date_updated}    ||= 0;
         $dist->{date_added}      ||= 0;
         $dist->{dist_source}     ||= 'unknown';
+        $dist->{stargazer_url}   ||= 'unknown';
+        $dist->{issue_url}       ||= 'unknown';
         $dist->{files}           //= '{}';
 
         my $res = $db->resultset('Dist')->update_or_create({
@@ -89,7 +91,7 @@ sub add {
             dist_build_id => { id => $dist->{build_id} },
             (map +( $_ => $dist->{$_} ),
                 qw/name  meta_url  url  repo_url  description  stars  issues
-                    date_updated  date_added  appveyor_url  files/,
+                    date_updated  date_added  appveyor_url  files  stargazer_url  issue_url/,
             ),
         });
 
