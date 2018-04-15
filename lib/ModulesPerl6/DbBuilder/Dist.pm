@@ -1,7 +1,6 @@
 package ModulesPerl6::DbBuilder::Dist;
 
 use ModulesPerl6::DbBuilder::Log;
-use ModulesPerl6::DbBuilder::Dist::Source::GitHub;
 use Mojo::File qw/path/;
 use Mojo::Util qw/decode/;
 use Mew;
