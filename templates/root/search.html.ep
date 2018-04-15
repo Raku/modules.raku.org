@@ -51,13 +51,13 @@
         ><%= $dist->{name} %></a>
           <b><%= $dist->{description} %></b></h2>
       <ul>
-        % if ($dist->{dist_source} eq 'github') {
+        % if ($dist->{stargazer_url} ne 'unknown') {
           <li title="Number of likes" data-toggle="tooltip"
-            ><a href="<%= $dist->{url} . '/stargazers' %>"
+            ><a href="<%= $dist->{stargazer_url} %>"
             ><i class="glyphicon glyphicon-star"></i>
               <%= $dist->{stars} %></a></li>
           <li title="Number of open Issues" data-toggle="tooltip"
-            ><a href="<%= $dist->{url} . '/issues' %>"
+            ><a href="<%= $dist->{issue_url} %>"
             ><i class="glyphicon glyphicon-info-sign"></i>
               <%= $dist->{issues} %></a></li>
         % } else {

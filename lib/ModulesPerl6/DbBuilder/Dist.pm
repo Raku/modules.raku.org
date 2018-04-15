@@ -1,6 +1,9 @@
 package ModulesPerl6::DbBuilder::Dist;
 
 use ModulesPerl6::DbBuilder::Log;
+use ModulesPerl6::DbBuilder::Dist::Source::GitHub;
+use Mojo::File qw/path/;
+use Mojo::Util qw/decode/;
 use Mew;
 use Module::Pluggable search_path => ['ModulesPerl6::DbBuilder::Dist::Source'],
                       sub_name    => '_sources',
@@ -9,9 +12,19 @@ use Module::Pluggable search_path
                         => ['ModulesPerl6::DbBuilder::Dist::PostProcessor'],
                       sub_name    => '_postprocessors',
                       require     => 1;
+use Pithub;
 
 has [qw/_build_id  _logos_dir  _meta_url/] => Str;
 has _dist_db => InstanceOf['ModulesPerl6::Model::Dists'];
+has _token => Str, (
+    is => 'lazy',
+    default => sub {
+        my $file = $ENV{MODULES_PERL6_GITHUB_TOKEN_FILE} // 'github-token';
+        -r $file or log fatal => "GitHub token file [$file] is missing "
+                            . 'or has no read permissions';
+        return decode 'utf8', path($file)->slurp;
+    },
+);
 
 #########################
 
@@ -56,6 +69,7 @@ sub _load_from_source {
                 dist     => $dist,
             )->process;
         }
+        $self->_fill_from_github($dist);
 
         delete $dist->{_builder};
         return $dist;
@@ -65,6 +79,41 @@ sub _load_from_source {
         . join "\n", map "$_ looks for " . $_->re, $self->_sources;
 
     return;
+}
+
+sub _fill_from_github {
+    my ($self, $dist) = @_;
+    return unless ($dist->{dist_source} eq 'cpan');
+
+    if ($dist->{repo_url} =~ m#(?<protocol>[^/]+)://github.com/(?<user>[^/]+)/(?<repo>[^/]+).git#) {
+
+        my $pithub = Pithub->new(
+            user  => $+{user},
+            repo  => $+{repo},
+            token => $self->_token,
+            ua    => LWP::UserAgent->new(
+                agent   => 'Perl 6 Ecosystem Builder',
+                timeout => 20,
+            ),
+        );
+
+        my $repo = $self->_repo($pithub->repos->get) or return;
+        $dist->{stars} = $repo->{stargazers_count};
+        $dist->{issues} = $repo->{open_issues_count};
+        $dist->{stargazer_url} = $repo->{html_url} . '/stargazers';
+        $dist->{issue_url} = $repo->{html_url} . '/issues';
+    }
+}
+
+sub _repo {
+    my ( $self, $res ) = @_;
+
+    unless ( $res->success ) {
+        log error => "Error accessing GitHub API. HTTP Code: " . $res->code;
+        return
+    }
+
+    return $res->content;
 }
 
 1;
