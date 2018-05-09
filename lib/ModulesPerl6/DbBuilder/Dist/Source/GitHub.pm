@@ -74,14 +74,13 @@ sub load {
         }
     }
 
-    my $repo_url = $dist->{support}{source} // $repo->{html_url};
     %$dist      = (
         %$dist,
         dist_source => 'github',
-        url         => $repo_url,
+        url         => $repo->{html_url},
         stargazer_url => $repo->{html_url} . '/stargazers',
         issue_url => $repo->{html_url} . '/issues',
-        repo_url    => $repo_url,
+        repo_url    => $repo->{html_url},
         issues      => $repo->{open_issues_count} // 0,
         stars       => $repo->{stargazers_count}  // 0,
     );
