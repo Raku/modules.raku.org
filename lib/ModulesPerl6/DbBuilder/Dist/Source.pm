@@ -75,10 +75,10 @@ sub _parse_meta {
     eval { $data->$json };
     if ( $@ ) { log error => "Failed to parse: JSON error: $@"; return; }
 
-    $json->{repo_url} = $json->{url}
-             = $json->{'source-url'}
-            // $json->{'repo-url'}
-            // $json->{support}{source};
+    $json->{repo_url} = $json->{support}{source}
+            // $json->{'source-url'}
+            // $json->{url}
+            // $json->{'repo-url'};
 
     my ($no_index, $tags) = @{ $self->_tag_aliases }{qw/no_index replacements/};
 
