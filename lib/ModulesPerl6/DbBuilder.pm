@@ -135,7 +135,7 @@ sub _cpan_metas {
     else {
         log info => 'rsyncing CPAN dists from ' .CPAN_RSYNC_URL;
         my @command = (qw{
-            /usr/bin/rsync  --prune-empty-dirs  -av
+            /usr/bin/rsync  --prune-empty-dirs  --delete  -av
             --exclude="/id/P/PS/PSIXDISTS/Perl6"
             --include="/id/*/*/*/Perl6/"
             --include="/id/*/*/*/Perl6/*.meta"
