@@ -71,6 +71,9 @@ sub load {
                     // $meta->{support}{source}
                     // $dist->{url};
                 if ($dist->{repo_url}) {
+                    $dist->{url} = $dist->{repo_url}
+                        if $dist->{url} eq 'N/A';
+
                     $dist->{repo_url} = "https://github.com/$1/$2"
                         if $dist->{repo_url} =~ m{^git\@github\.com:([^/]+)/([^/]+\.git)$};
                     $dist->{repo_url} = Mojo::URL->new(
