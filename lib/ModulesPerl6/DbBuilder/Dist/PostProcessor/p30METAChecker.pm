@@ -103,8 +103,9 @@ sub _check_meta_url {
     my $code = Mojo::UserAgent->new( max_redirects => 5 )
         ->get( $dist->{url} )->res->code;
 
-    log +( $code == 200 ? 'info' : 'error' ),
-        "HTTP $code when accessing dist source URL ($dist->{url})";
+    log +( ($code//0) == 200 ? 'info' : 'error' ),
+        ($code ? "HTTP $code" : "Unknown response") . " when accessing dist source URL ("
+        . ($dist->{url} // 'Unknown dist URL') . ")";
 }
 
 1;
