@@ -22,8 +22,8 @@ use feature 'state';
 sub process {
     my $self = shift;
 
-    $self->__fetch_file(sub {$_[0]->{name} =~ /^README/i   }, 'README');
-    $self->__fetch_file(sub {$_[0]->{name} eq '.travis.yml'}, 'README');
+    $self->__fetch_file(sub {$_[0]->{name} =~ /^README/i   }, 'README'     );
+    $self->__fetch_file(sub {$_[0]->{name} eq '.travis.yml'}, '.travis.yml');
 
     return 1;
 }
