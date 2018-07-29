@@ -2,7 +2,8 @@
 
 use strict;
 use warnings FATAL => 'all';
-
+use FindBin;
+use lib "$FindBin::Bin/../../";
 use File::Temp;
 use Test::Most;
 use t::Helper;

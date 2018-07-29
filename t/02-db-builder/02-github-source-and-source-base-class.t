@@ -2,6 +2,8 @@
 
 use strict;
 use warnings FATAL => 'all';
+use FindBin;
+use lib "$FindBin::Bin/../../";
 use utf8;
 use File::Spec::Functions qw/catfile/;
 use Test::Most;

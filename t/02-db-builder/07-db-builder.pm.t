@@ -2,7 +2,8 @@
 
 use strict;
 use warnings FATAL => 'all';
-
+use FindBin;
+use lib "$FindBin::Bin/../../";
 use Mojo::Util qw/spurt  trim/;
 use Test::Most;
 use Test::Output qw/combined_from/;

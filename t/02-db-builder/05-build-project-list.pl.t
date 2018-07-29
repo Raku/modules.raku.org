@@ -2,7 +2,8 @@
 
 use strict;
 use warnings FATAL => 'all';
-
+use FindBin;
+use lib "$FindBin::Bin/../../";
 use File::Temp qw/tempdir/;
 use Mojo::Util qw/spurt  trim/;
 use Test::Most;
