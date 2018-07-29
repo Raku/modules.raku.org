@@ -22,23 +22,23 @@ use feature 'state';
 sub process {
     my $self = shift;
 
-    $self->_fetch_content_for_first_readme;
+    $self->__fetch_file(sub {$_[0]->{name} =~ /^README/i   }, 'README');
+    $self->__fetch_file(sub {$_[0]->{name} eq '.travis.yml'}, 'README');
 
     return 1;
 }
 
-sub _fetch_content_for_first_readme {
-    my $self = shift;
+sub __fetch_file {
+    my ($self, $file_grep, $error_name) = @_;
     my $dist = $self->_dist;
-
-    my ($readme) = grep $_->{name} =~ /^README/i,
+    my ($file) = grep {$file_grep->($_)}
         ($dist->{_builder}{files} || [])->@*
     or return;
 
     state $token = trim path($ENV{MODULES_PERL6_GITHUB_TOKEN_FILE})->slurp;
     my $content = eval {
         my $res_json = Mojo::UserAgent->new( max_redirects => 5 )
-            ->get( $readme->{url} => {
+            ->get( $file->{url} => {
                 Authorization => "token $token"
             })->result->json;
         defined $res_json->{content} or die $res_json->{message};
@@ -46,7 +46,7 @@ sub _fetch_content_for_first_readme {
     };
     if ($@) {
         log error => "ERROR fetching README content: $@";
-        $readme->{error} = "$@";
+        $file->{error} = "$@";
         return;
     }
 
@@ -58,7 +58,7 @@ sub _fetch_content_for_first_readme {
 
     # Possible encodings are 'utf-8' and 'base64', per
     # https://developer.github.com/v3/git/blobs/#parameters
-    $readme->{content} = $content->{encoding} eq 'base64'
+    $file->{content} = $content->{encoding} eq 'base64'
         ? (b64_decode $content->{content})
         :             $content->{content};
 }
@@ -66,4 +66,3 @@ sub _fetch_content_for_first_readme {
 1;
 
 __END__
-
