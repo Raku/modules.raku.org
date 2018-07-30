@@ -84,7 +84,7 @@ sub _check_todo_problem_readme {
     # problems, as otherwise we'd be flopping on reporting these README issues,
     # whenever network problems occur.
     return grep $_->{problem} =~ /\bREADME\b/, ($dist->{problems} || [])->@*
-        if $readme->{error};
+        if $readme->{error} or not defined $readme->{content};
 
     return unless $readme->{content} =~ /\b(panda|ufo)\b/;
     problem 'README mentions discouraged tools (panda or ufo)', 2
@@ -118,7 +118,7 @@ sub _check_todo_problem_travis_yml {
     # If we failed to fetch the travis yml content, return any cached travis
     # problems.
     return grep $_->{problem} =~ /\bTravis-CI\b/, ($dist->{problems} || [])->@*
-        if $travisyml->{error};
+        if $travisyml->{error} or not defined $travisyml->{content};
 
     return unless $travisyml->{content} =~ /\brakudobrew\s+build[- ]panda\b/;
     problem 'Travis-CI config asks rakudobrew to build panda.', 3
