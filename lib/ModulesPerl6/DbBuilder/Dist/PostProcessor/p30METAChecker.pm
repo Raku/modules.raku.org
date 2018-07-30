@@ -86,10 +86,8 @@ sub _check_todo_problem_readme {
     return grep $_->{problem} =~ /\bREADME\b/, ($dist->{problems} || [])->@*
         if $readme->{error};
 
+    return unless $readme->{content} =~ /\b(panda|ufo)\b/;
     problem 'README mentions discouraged tools (panda or ufo)', 2
-        if ($readme->{content}||'') =~ /\b(panda|ufo)\b/;
-
-    return
 }
 
 sub _check_meta_url {
@@ -122,10 +120,8 @@ sub _check_todo_problem_travis_yml {
     return grep $_->{problem} =~ /\bTravis-CI\b/, ($dist->{problems} || [])->@*
         if $travisyml->{error};
 
+    return unless $travisyml->{content} =~ /\brakudobrew\s+build[- ]panda\b/;
     problem 'Travis-CI config asks rakudobrew to build panda.', 3
-        if ($travisyml->{content}||'') =~ /\brakudobrew\s+build[- ]panda\b/;
-
-    return
 }
 
 
