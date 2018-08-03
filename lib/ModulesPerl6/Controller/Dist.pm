@@ -118,7 +118,7 @@ sub _fetch_dist {
 sub _try_showing_readme {
     my ($self, $files_dir) = @_;
     my ($readme) = bsd_glob +(catfile UNPACKED_DISTS, $files_dir)
-        . '/README.{md,markdown}';
+        . '/{README,readme}.{md,markdown}';
     -r $readme or return;
 
     my $data = (
