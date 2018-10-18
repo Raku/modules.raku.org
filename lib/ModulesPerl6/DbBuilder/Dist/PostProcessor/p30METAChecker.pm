@@ -93,6 +93,11 @@ sub _check_todo_problem_readme {
 sub _check_meta_url {
     my ($self, $dist) = @_;
 
+    if ($dist->{url} eq 'N/A') {
+        log warn => "Do not find dist source URL to check";
+        return;
+    }
+
     my $repo_url = 'https://github.com/'
         . join '/', grep length, @{ $dist->{_builder} }{qw/repo_user  repo/};
 
