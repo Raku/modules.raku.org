@@ -27,6 +27,11 @@ sub load {
     log info => 'Fetching distro info and commits';
     my $dist    = $self->_dist or return;
 
+    my ($user, $repo) = $self->_meta_url =~ $self->re;
+    if ($user and $repo) {
+        @$dist{qw/url  repo_url/} = join '/', 'https://gitlab.com', $user, $repo
+    }
+
     $dist->{dist_source} = 'gitlab';
 
     $dist->{author_id} = $dist->{_builder}{repo_user}
