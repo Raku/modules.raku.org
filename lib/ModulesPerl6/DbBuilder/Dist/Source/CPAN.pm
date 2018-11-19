@@ -23,7 +23,7 @@ use constant UNPACKED_DISTS => 'dists-from-CPAN-unpacked';
 
 sub re {
     qr{
-        ^   cpan?://
+        ^   cpan://
             (               # file
                 id/
                 (           # dist dir portion
