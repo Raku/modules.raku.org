@@ -21,6 +21,7 @@ use Mew;
 use experimental 'postderef';
 
 use constant CPAN_RSYNC_URL => 'cpan-rsync.perl.org::CPAN/authors/id';
+use constant CPAN_RSYNC_FALLBACK_URL => 'ftp-stud.hs-esslingen.de::CPAN/authors/id';
 use constant LOCAL_CPAN_DIR => 'dists-from-CPAN';
 
 has [qw/_app  _db_file  _logos_dir/] => Str;
@@ -133,22 +134,35 @@ sub _cpan_metas {
             . 'searching for META files';
     }
     else {
-        log info => 'rsyncing CPAN dists from ' .CPAN_RSYNC_URL;
-        my @command = (qw{
-            /usr/bin/rsync  --prune-empty-dirs  --delete  -av
-            --exclude="/id/P/PS/PSIXDISTS/Perl6"
-            --include="/id/*/*/*/Perl6/"
-            --include="/id/*/*/*/Perl6/*.meta"
-            --include="/id/*/*/*/Perl6/*.tar.gz"
-            --include="/id/*/*/*/Perl6/*.tgz"
-            --include="/id/*/*/*/Perl6/*.zip"
-            --exclude="/id/*/*/*/Perl6/*"
-            --exclude="/id/*/*/*/*"
-            --exclude="id/*/*/CHECKSUMS"
-            --exclude="id/*/CHECKSUMS"
-        }, CPAN_RSYNC_URL, LOCAL_CPAN_DIR);
-        qx/@command/;
-        log info => 'rsync done; searching for META files';
+        my $success = 0;
+        for my $rsync_url (CPAN_RSYNC_URL, CPAN_RSYNC_FALLBACK_URL) {
+            log info => 'rsyncing CPAN dists from ' .$rsync_url;
+            my @command = (qw{
+                /usr/bin/rsync  --prune-empty-dirs  --delete  -av
+                --exclude="/id/P/PS/PSIXDISTS/Perl6"
+                --include="/id/*/*/*/Perl6/"
+                --include="/id/*/*/*/Perl6/*.meta"
+                --include="/id/*/*/*/Perl6/*.tar.gz"
+                --include="/id/*/*/*/Perl6/*.tgz"
+                --include="/id/*/*/*/Perl6/*.zip"
+                --exclude="/id/*/*/*/Perl6/*"
+                --exclude="/id/*/*/*/*"
+                --exclude="id/*/*/CHECKSUMS"
+                --exclude="id/*/CHECKSUMS"
+            }, $rsync_url, LOCAL_CPAN_DIR);
+            qx/@command/;
+            if ($? == 0) {
+                log info => 'rsync done; searching for META files';
+                $success = 1;
+                last;
+            }
+            else {
+                log info => "rsync for $rsync_url errored out with return code $?";
+            }
+        }
+        if (!$success) {
+            log warn => "could not rsync cpan :(";
+        }
     }
 
     my @metas;
