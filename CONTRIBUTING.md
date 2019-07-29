@@ -1,7 +1,7 @@
 # Contributing to this repo
 
 Read first [the deployment instructions](DEPLOYMENT.md), so that you
-cna have a working copy of the site there before you start.
+can have a working copy of the site there before you start.
 
 The site is mostly written in Perl 5, so you will need a good
 knowledge of this language. 
