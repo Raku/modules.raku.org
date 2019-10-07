@@ -42,6 +42,17 @@ FULL_REBUILD=$DO_REBUILD perl bin/build-project-list.pl --restart-app \
     cp "$log_file" public/update.log ||
     { echo 'Building failed'; rm $log_file; exit 1; }
 
+# fix: Can't load application from file "/home/modules.perl6.org/modules.perl6.org/bin/ModulesPerl6.pl": iCCP: known incorrect sRGB profile at /home/modules.perl6.org/modules.perl6.org/bin/../lib/ModulesPerl6/SpriteMaker.pm line 30.
+# see: https://stackoverflow.com/questions/22745076/libpng-warning-iccp-known-incorrect-srgb-profile
+# needs: apt install imagemagick
+#        apt install pngcrush
+ls -1 ~/modules.perl6.org/public/content-pics/dist-logos/*.png | while read I; do
+   if pngcrush -n -q $I | grep "pngcrush: iCCP: profile 'ICC Profile': 0h: PCS illuminant is not D50"; then
+	echo "### mogrify $I"
+	mogrify $I
+   fi
+done
+
 if [ "$db_file" != "$standard_db_file" ]
 then
     echo "Moving temp db to regular place"
