@@ -4,7 +4,7 @@ use base 'ModulesPerl6::DbBuilder::Dist::Source';
 
 use Archive::Any;
 use File::Spec::Functions qw/catfile  splitdir/;
-use File::Basename qw/fileparse/;
+use File::Basename qw/fileparse dirname/;
 use File::Copy qw/move/;
 use File::Glob qw/bsd_glob/;
 use File::Path qw/make_path  remove_tree/;
@@ -110,10 +110,17 @@ sub _extract {
     };
 
     remove_tree $dist_dir;
-    make_path   $dist_dir;
-    -d $dist_dir or return [];
 
-    my $extraction_dir = tempdir CLEANUP => 1;
+    my $base_dist_dir = dirname $dist_dir;
+    make_path $base_dist_dir;
+    -d $base_dist_dir or return [];
+
+    my $base_tmp_dir = "$ENV{HOME}/tmp";
+    -d $base_tmp_dir or make_path $base_tmp_dir;
+
+    my $extraction_dir = tempdir CLEANUP => 1, DIR => $base_tmp_dir;
+
+    log info => "extract $archive_file to $extraction_dir";
     $archive->extract($extraction_dir);
 
     my @files;
@@ -122,7 +129,8 @@ sub _extract {
         @files = $archive->files;
     }
     else {
-        move +(bsd_glob "$extraction_dir/*")[0], $dist_dir;
+	log info => "move ".+(bsd_glob "$extraction_dir/*")[0].", $dist_dir";
+	move +(bsd_glob "$extraction_dir/*")[0], $dist_dir or log warn => $!;
         @files = map {
             my @bits = splitdir $_;
             shift @bits;
