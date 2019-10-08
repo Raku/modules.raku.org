@@ -1,6 +1,6 @@
 #!/bin/bash
 . /home/modules.perl6.org/perl5/perlbrew/etc/bashrc
-set -e -x
+#set -e -x
 echo 'Starting module update'
 date
 cd ~/modules.perl6.org/
@@ -46,12 +46,14 @@ FULL_REBUILD=$DO_REBUILD perl bin/build-project-list.pl --restart-app \
 # see: https://stackoverflow.com/questions/22745076/libpng-warning-iccp-known-incorrect-srgb-profile
 # needs: apt install imagemagick
 #        apt install pngcrush
-ls -1 ~/modules.perl6.org/public/content-pics/dist-logos/*.png | while read I; do
-   if pngcrush -n -q $I | grep "pngcrush: iCCP: profile 'ICC Profile': 0h: PCS illuminant is not D50"; then
+cd ~/modules.perl6.org/public/content-pics/dist-logos
+ls -1 *.png | while read I; do
+   if pngcrush -n -q $I 2>&1 | grep "pngcrush: iCCP: profile 'ICC Profile': 0h: PCS illuminant is not D50"; then
 	echo "### mogrify $I"
 	mogrify $I
    fi
 done
+cd -
 
 if [ "$db_file" != "$standard_db_file" ]
 then
