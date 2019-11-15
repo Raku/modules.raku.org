@@ -5,9 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title><%= length(title) ? title() . ' - ' : '' %>Perl 6 Modules
+  <title><%= length(title) ? title() . ' - ' : '' %>Raku Modules
       Directory</title>
-  <link href="//perl6.org/favicon.ico" rel="shortcut icon">
+  <link href="//raku.org/favicon.ico" rel="shortcut icon">
   %= asset "app.css";
 </head>
 <body<%== stash('body_class') ? ' class="' . stash('body_class') . '"' : '' %>>
@@ -31,16 +31,16 @@
           <li><a href="https://github.com/ugexe/zef/">
             <i class="glyphicon glyphicon-compressed"></i>
               Module installer</a></li>
-          <li><a href="http://docs.perl6.org/language/modules-core">
+          <li><a href="https://docs.raku.org/language/modules-core">
             <i class="glyphicon glyphicon-apple"></i> Core modules</a></li>
           <li class="hidden-md hidden-sm"
-            ><a href="https://docs.perl6.org">
+            ><a href="https://docs.raku.org">
             <i class="glyphicon glyphicon-book"></i>
               Language docs</a></li>
           <li class="hidden-md hidden-sm"
             ><a href="http://finanalyst.github.io/ModuleCitation/">
               <i class="glyphicon glyphicon-heart"></i> Citations</a></li>
-          <li><a href="http://doc.perl6.org/language/modules">
+          <li><a href="http://docs.raku.org/language/modules">
             <i class="glyphicon glyphicon-wrench"></i> Create a module</a></li>
           <li class="hidden-sm"><a href="https://github.com/perl6/perl6-most-wanted/blob/master/most-wanted/modules.md">
             <i class="glyphicon glyphicon-star"></i> Most wanted</a></li>

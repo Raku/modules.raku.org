@@ -1,6 +1,6 @@
-# modules.perl6.org
+# modules.raku.org
 
-These are the scripts to generate the website on http://modules.perl6.org/
+These are the scripts to generate the website on http://modules.raku.org/
 
 ## TODOs
 
@@ -67,10 +67,10 @@ See [DEPLOYMENT.md](DEPLOYMENT.md)
 Once committed, the production cron job will pick up your changes on the 20th and 50th minutes of every hour. The script can take up to 10 minutes to complete.
 
 ```
-20,50   *       *       *       *       sh update-modules.perl6.org > log/update.log 2>&1; cp log/update.log /var/www/modules.perl6.org/public/update.log
+20,50   *       *       *       *       sh update-modules.raku.org > log/update.log 2>&1; cp log/update.log /var/www/modules.raku.org/public/update.log
 ```
 
-The cron job results can be found [here](http://modules.perl6.org/update.log).
+The cron job results can be found [here](http://modules.raku.org/update.log).
 
 If you only made changes to the web app, you can get them live a bit faster
 by using `[REAPP]` as first thing in commit message title (including brackets),
