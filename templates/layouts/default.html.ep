@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title><%= length(title) ? title() . ' - ' : '' %>Perl 6 Modules
+  <title><%= length(title) ? title() . ' - ' : '' %>Raku Modules
       Directory</title>
   <link href="//perl6.org/favicon.ico" rel="shortcut icon">
   %= asset "app.css";
