@@ -38,11 +38,11 @@
             <i class="glyphicon glyphicon-book"></i>
               Language docs</a></li>
           <li class="hidden-md hidden-sm"
-            ><a href="http://finanalyst.github.io/ModuleCitation/">
+            ><a href="https://finanalyst.github.io/ModuleCitation/">
               <i class="glyphicon glyphicon-heart"></i> Citations</a></li>
-          <li><a href="http://docs.raku.org/language/modules">
+          <li><a href="https://docs.raku.org/language/modules">
             <i class="glyphicon glyphicon-wrench"></i> Create a module</a></li>
-          <li class="hidden-sm"><a href="https://github.com/perl6/perl6-most-wanted/blob/master/most-wanted/modules.md">
+          <li class="hidden-sm"><a href="https://github.com/Raku/perl6-most-wanted/blob/master/most-wanted/modules.md">
             <i class="glyphicon glyphicon-star"></i> Most wanted</a></li>
           <li><a href="https://webchat.freenode.net/?channels=#raku">
             <i class="glyphicon glyphicon-user"></i> Chat with us</a></li>
@@ -67,8 +67,8 @@
       <p class="text-muted">
         <small>
           This page was generated from the files in the
-          <a href="http://github.com/perl6/modules.perl6.org/"
-            >modules.perl6.org repository</a>
+          <a href="https://github.com/Raku/modules.raku.org"
+            >modules.raku.org repository</a>
             on <i class="build_last_updated">
             % my $last_up = stash('last_updated')
             % || build_stats->stats('last_updated')->{last_updated};
