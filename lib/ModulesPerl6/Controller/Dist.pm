@@ -13,6 +13,7 @@ use Text::MultiMarkdown qw/markdown/;
 use experimental 'postderef';
 
 use constant UNPACKED_DISTS => 'dists-from-CPAN-unpacked';
+use constant UNPACKED_ZEFS  => 'dists-from-ZEF-unpacked';
 
 sub dist {
     my $self = shift;
@@ -44,7 +45,9 @@ sub _fetch_dist {
         wanted => $wanted, dists => $dists, template => 'dist/ambiguous-dist',
     ) if $dists->@* > 1;
     return $self->redirect_to($dists->first->{url})
-        if $dists->@* == 1 and $dists->first->{dist_source} ne 'cpan';
+        if  $dists->@* == 1
+        and $dists->first->{dist_source} ne 'cpan'
+        and $dists->first->{dist_source} ne 'zef';
 
     my $dist = $dists->first;
     my ($files_dir, $files)
@@ -65,8 +68,8 @@ sub _fetch_dist {
     unless (keys %{ $files || {} }) {
         # we're either in an empty dir or user wants a file
 
-        $wanted_file = catfile UNPACKED_DISTS, $files_dir,
-            (length $file_prefix ? $file_prefix : ());
+        $wanted_file = catfile( ($from eq 'zef' ? UNPACKED_ZEFS : UNPACKED_DISTS), $files_dir,
+            (length $file_prefix ? $file_prefix : ()) );
         $wanted_file = undef unless -f $wanted_file;
     }
 
@@ -90,7 +93,7 @@ sub _fetch_dist {
             map {
                 my $full = catfile
                     +(length $file_prefix ? $file_prefix : ()), $_;
-                my $real = catfile UNPACKED_DISTS, $files_dir, $full;
+                my $real = catfile( ($from eq 'zef' ? UNPACKED_ZEFS : UNPACKED_DISTS), $files_dir, $full );
                 +{
                     full   => $full,
                     is_dir => (-d $real ? 1 : 0),

@@ -36,5 +36,7 @@ t/03-app/public/sprite.png
 /blib/
 /dists-from-CPAN
 /dists-from-CPAN-unpacked
+/dists-from-ZEF
+/dists-from-ZEF-unpacked
 /test.pl
 /pristine-dists-from-CPAN
