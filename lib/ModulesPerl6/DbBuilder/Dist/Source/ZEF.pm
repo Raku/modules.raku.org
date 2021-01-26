@@ -80,7 +80,6 @@ sub load {
     }
     $dist->{files} = to_json $dist->{files};
     $dist->{_builder}{post}{no_meta_checker} = 1;
-    use DDP; p $dist;
 
     return $dist;
 }
