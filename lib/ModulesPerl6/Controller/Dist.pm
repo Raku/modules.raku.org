@@ -103,7 +103,7 @@ sub _fetch_dist {
         ];
     }
 
-    $self->_try_showing_readme($files_dir) unless $file_prefix;
+    $self->_try_showing_readme(catfile(($from eq 'zef' ? UNPACKED_ZEFS : UNPACKED_DISTS), $files_dir)) unless $file_prefix;
 
     my @up_dir_parts = splitdir $file_prefix;
     pop @up_dir_parts;
@@ -119,8 +119,8 @@ sub _fetch_dist {
 }
 
 sub _try_showing_readme {
-    my ($self, $files_dir) = @_;
-    my ($readme) = bsd_glob +(catfile UNPACKED_DISTS, $files_dir)
+    my ($self, $fd) = @_;
+    my ($readme) = bsd_glob +($fd)
         . '/{README,readme}.{md,markdown}';
     -r $readme or return;
 
