@@ -87,7 +87,6 @@ sub load {
 sub _extract {
     my ($self, $file, $dist_dir) = @_;
     my $archive_file = $file;
-    log info => 'FOUND: ' . $archive_file;
     unless ($archive_file) {
         log error => "Could not find archive for $file";
         return [];

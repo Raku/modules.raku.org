@@ -241,6 +241,7 @@ sub _zef_metas {
     }
 
     my @meta_list;
+    my %metav;
     if ($self->_no_rsync) {
         log info => '--no-rsync option used; skipping rsync; '
             . 'searching for META files';
@@ -257,6 +258,12 @@ sub _zef_metas {
             my $local_dir = catfile LOCAL_ZEF_DIR, $dir;
             my $metaf = $path;
             $metaf =~ s/\.tar\.gz$/.meta/;
+            my ($name, $version, $auth, $api) = ($meta->{name}, $meta->{version}, $meta->{auth}, ($meta->{api}||'0'));
+            my $dname = "$name";
+            if (!defined $metav{$dname} || 0 > versioncmp $metav{$dname}->{version}, $version) {
+              $metav{$dname}->{dir}     = catfile $dir, $metaf;
+              $metav{$dname}->{version} = $version;
+            }
             if (-f catfile $local_dir, $path) {
                 push @meta_list, 'zef://' . catfile $dir, $metaf;
                 next;
@@ -273,7 +280,11 @@ sub _zef_metas {
             push @meta_list, 'zef://' . $dir . $metaf;
         }
     }
-    return @meta_list;
+    @metas = map {
+        'zef://' . $metav{$_}{dir},
+    } sort keys %metav;
+
+    return @metas;
 }
 
 sub _p6c_metas {

@@ -3,6 +3,7 @@ config.proto
 *.pir
 cache/*
 *~
+*.swp
 _build
 Build
 github-token
