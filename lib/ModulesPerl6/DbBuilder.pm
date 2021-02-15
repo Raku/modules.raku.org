@@ -7,6 +7,7 @@ use File::Path            qw/make_path  remove_tree/;
 use File::Find            qw/find/;
 use File::Spec::Functions qw/catfile/;
 use Mojo::File            qw/path/;
+use Mojo::JSON            qw/decode_json encode_json/;
 use Mojo::URL;
 use Mojo::UserAgent;
 use Mojo::Util            qw/trim/;
@@ -23,14 +24,17 @@ use experimental 'postderef';
 use constant CPAN_RSYNC_URL => 'cpan-rsync.perl.org::CPAN/authors/id';
 use constant CPAN_RSYNC_FALLBACK_URL => 'ftp-stud.hs-esslingen.de::CPAN/authors/id';
 use constant LOCAL_CPAN_DIR => 'dists-from-CPAN';
+use constant LOCAL_ZEF_DIR  => 'dists-from-ZEF';
 
 has [qw/_app  _db_file  _logos_dir/] => Str;
-has -_limit       => Maybe[ PositiveNum ];
-has -_restart_app => Maybe[ Bool ];
-has -_no_p6c      => Maybe[ Bool ];
-has -_no_cpan     => Maybe[ Bool ];
-has -_no_rsync    => Maybe[ Bool ];
-has _meta_list    => Str;
+has -_limit        => Maybe[ PositiveNum ];
+has -_restart_app  => Maybe[ Bool ];
+has -_no_p6c       => Maybe[ Bool ];
+has -_no_zef       => Maybe[ Bool ];
+has -_no_cpan      => Maybe[ Bool ];
+has -_no_rsync     => Maybe[ Bool ];
+has _meta_list     => Str;
+has _zef_list => Str;
 has _model_build_stats => (
     is      => 'lazy',
     default => sub {
@@ -65,7 +69,8 @@ sub run {
             warn "---\n";
             log info => 'Processing dist ' . ($idx+1) . ' of ' . @metas;
             my $dist = ModulesPerl6::DbBuilder::Dist->new(
-                meta_url  => $metas[$idx],
+                meta_url  => (ref $metas[$idx] eq 'HASH' ? '' : $metas[$idx]),
+                raw_meta  => (ref $metas[$idx] eq 'HASH' ? $metas[$idx] : undef),
                 build_id  => $build_id,
                 logos_dir => $self->_logos_dir,
                 dist_db   => $self->_model_dists,
@@ -122,6 +127,7 @@ sub _deploy_db {
 sub _metas {
     my $self = shift;
     return
+        ($self->_no_zef  ? () : $self->_zef_metas ),
         ($self->_no_cpan ? () : $self->_cpan_metas),
         ($self->_no_p6c  ? () : $self->_p6c_metas );
 }
@@ -201,6 +207,84 @@ sub _cpan_metas {
 
     log info => 'Found ' . @metas . ' CPAN dists';
     return @metas
+}
+
+sub _zef_metas {
+    my $self     = shift;
+    my $zef_list = $self->_zef_list;
+
+    log info => "Loading zef META.list from $zef_list";
+    my $url = Mojo::URL->new( $zef_list );
+    my $raw_data;
+    if ( $url->scheme and $url->scheme =~ /(ht|f)tps?/i ) {
+        log info => '... a URL detected; trying to fetch';
+        my $tx = Mojo::UserAgent->new( max_redirects => 10 )->get( $url );
+        if ( ! $tx->success ) {
+            my $err = $tx->error;
+            log fatal => "$err->{code} response: $err->{message}" if $err->{code};
+            log fatal => "Connection error: $err->{message}";
+        }
+        $raw_data = $tx->res->body;
+    } elsif ( -r $zef_list ) {
+        log info => '... a file detected; trying to read';
+        $raw_data = path($zef_list)->slurp;
+    } else {
+        log fatal => 'Could not figure out how to load META.list. It does '
+            . 'not seem to be a URL, but is not a [readable] file either';
+    }
+    my @metas = decode_json($raw_data)->@*;
+    log info => 'Found ' . +@metas . ' remote dists';
+
+    if ( my $limit = $self->_limit ) {
+        @metas = splice @metas, 0, $limit;
+        log info => "Limiting build to $limit dists due to explicit request";
+    }
+
+    my @meta_list;
+    my %metav;
+    if ($self->_no_rsync) {
+        log info => '--no-rsync option used; skipping rsync; '
+            . 'searching for META files';
+    }
+    else {
+        log info => 'syncing from zef eco';
+        my $success = 0;
+        make_path( LOCAL_ZEF_DIR ) unless -d LOCAL_ZEF_DIR;
+        for my $meta (@metas) {
+            next unless $meta->{path};
+            my ($path, $dir) = $meta->{path};
+            $path =~ s/^repo\///;
+            ($path, $dir) = fileparse $path;
+            my $local_dir = catfile LOCAL_ZEF_DIR, $dir;
+            my $metaf = $path;
+            $metaf =~ s/\.tar\.gz$/.meta/;
+            my ($name, $version, $auth, $api) = ($meta->{name}, $meta->{version}, $meta->{auth}, ($meta->{api}||'0'));
+            my $dname = "$name";
+            if (!defined $metav{$dname} || 0 > versioncmp $metav{$dname}->{version}, $version) {
+              $metav{$dname}->{dir}     = catfile $dir, $metaf;
+              $metav{$dname}->{version} = $version;
+            }
+            if (-f catfile $local_dir, $path) {
+                push @meta_list, 'zef://' . catfile $dir, $metaf;
+                next;
+            }
+            make_path( $local_dir ) unless -d $local_dir;
+            my $tx = Mojo::UserAgent->new( max_redirects => 10 )->get( "http://360.zef.pm/$dir$path" );
+            $tx->result->save_to(catfile $local_dir, $path);
+            if (! $tx->success ) {
+                log info => 'zef failed to download ' . catfile $dir, $path;
+                unlink catfile($local_dir, $path) if -f catfile $local_dir, $path;
+                next;
+            }
+            path(catfile $local_dir, $metaf)->spurt(encode_json($meta));
+            push @meta_list, 'zef://' . $dir . $metaf;
+        }
+    }
+    @metas = map {
+        'zef://' . $metav{$_}{dir},
+    } sort keys %metav;
+
+    return @metas;
 }
 
 sub _p6c_metas {

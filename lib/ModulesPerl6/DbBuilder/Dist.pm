@@ -82,7 +82,7 @@ sub _load_from_source {
 
 sub _fill_from_github {
     my ($self, $dist) = @_;
-    return unless ($dist->{dist_source} eq 'cpan');
+    return unless ($dist->{dist_source} eq 'cpan' || $dist->{dist_source} eq 'zef') && $dist->{repo_url};
 
     if ($dist->{repo_url} =~ m#(?<protocol>[^/]+)://github.com/(?<user>[^/]+)/(?<repo>[^/]+).git#) {
 

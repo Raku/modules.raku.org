@@ -49,7 +49,6 @@ sub _find {
             result_class => 'DBIx::Class::ResultClass::HashRefInflator'
         } : ()
     );
-
     return $is_hri ? c map {
         # TODO XXX: there got to be a better way to do this?
         $_->{tags}     = [ sort map $_->{tag}{tag}, @{ delete $_->{tag_dists} } ];

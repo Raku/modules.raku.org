@@ -18,8 +18,10 @@ use constant APP               => 'bin/ModulesPerl6.pl';
 use constant LOGOS_DIR         => catdir  qw/public  content-pics  dist-logos/;
 use constant META_LIST_FILE    => 'https://raw.githubusercontent.com'
                                     . '/perl6/ecosystem/master/META.list';
+use constant ZEF_LIST_FILE     => 'https://360.zef.pm';
 
 my $meta_list         = META_LIST_FILE;
+my $zef_list          = ZEF_LIST_FILE;
 my $github_token_file = GITHUB_TOKEN_FILE;
 my $logos_dir         = LOGOS_DIR;
 my $db_file           = DB_FILE;
@@ -30,11 +32,13 @@ GetOptions(
     'help|?'              => \my $help,
     'man'                 => \my $man,
     'meta-list=s'         => \$meta_list,
+    'zef-list=s'          => \$zef_list,
     'limit=i'             => \my $limit,
     'logos-dir=s'         => \$logos_dir,
     'restart-app'         => \my $restart_app,
     'no-p6c|?'            => \my $no_p6c,
     'no-cpan|?'           => \my $no_cpan,
+    'no-zef|?'            => \my $no_zef,
     'no-rsync|?'          => \my $no_rsync,
 ) or pod2usage 2;
 
@@ -43,14 +47,16 @@ pod2usage -exitval => 0, -verbose => 2 if $man;
 
 $ENV{MODULES_PERL6_GITHUB_TOKEN_FILE} = $github_token_file;
 ModulesPerl6::DbBuilder->new(
-    app         => APP,
-    db_file     => $db_file,
-    limit       => $limit,
-    logos_dir   => $logos_dir,
-    meta_list   => $meta_list,
+    app          => APP,
+    db_file      => $db_file,
+    limit        => $limit,
+    logos_dir    => $logos_dir,
+    meta_list    => $meta_list,
+    zef_list    => $zef_list,
     restart_app => $restart_app,
     no_p6c      => $no_p6c,
     no_cpan     => $no_cpan,
+    no_zef      => $no_zef,
     no_rsync    => $no_rsync,
 )->run;
 
@@ -80,6 +86,7 @@ __END__
    --restart-app
    --no-p6c
    --no-cpan
+   --no-zef
    --no-rsync
 
    Short form (first letter of the option or more when need to disambiguate):
