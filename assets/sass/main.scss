@@ -225,6 +225,7 @@ footer:hover {
 
 .source-cpan,
 .source-gitlab,
+.source-zef,
 .source-github {
     vertical-align: middle;
     display: inline-block;
@@ -240,9 +241,13 @@ footer:hover {
 .source-cpan {
     background: url(/pics/cpan-icon.png);
 }
+.source-zef {
+    background: url(/pics/zef-icon.png);
+}
 
 .icon-24-cpan,
 .icon-24-gitlab,
+.icon-24-zef,
 .icon-24-github {
     box-sizing: content-box;
     vertical-align: middle;
@@ -260,6 +265,9 @@ footer:hover {
 }
 .icon-24-cpan {
     background-image: url(/pics/cpan-icon-24.png);
+}
+.icon-24-zef {
+    background-image: url(/pics/zef-icon-24.png);
 }
 
 #donation-bar {
