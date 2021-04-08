@@ -1,4 +1,6 @@
 % layout 'default';
+% title "$dist->{name}:auth<" . stash('dist_auth') . ">" .
+%   ($file_prefix ? " $file_prefix" : "");
 
 %= form_for search => class => "form-inline well well-sm search-form" => begin
   <div class="form-group">
