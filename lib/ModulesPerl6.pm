@@ -19,7 +19,8 @@ sub startup {
     # SETUP
     $self->plugin('Config');
     $self->moniker('ModulesPerl6');
-    $self->plugin('PODRenderer') if $self->mode eq 'development';
+    # TODO PODRenderer is no longer part of Mojolicious; switch to PODViewer
+    #$self->plugin('PODRenderer') if $self->mode eq 'development';
     unshift $self->static->paths->@*, $ENV{MODULESPERL6_EXTRA_STATIC_PATH}
         if length $ENV{MODULESPERL6_EXTRA_STATIC_PATH};
 
