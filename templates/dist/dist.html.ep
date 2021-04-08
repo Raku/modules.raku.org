@@ -9,7 +9,7 @@
 % end
 
 <h2><%= $dist->{name} %>
-  <small><%= $dist->{dist_source} %>:<%= $dist->{author_id} %>
+  <small><%= stash 'dist_auth' %>
     <a href="<%= $dist->{url} %>" class="btn btn-sm btn-default"
       title="Dist source" data-toggle="tooltip"
     ><i class="source-<%= $dist->{dist_source} %>"></i></a>

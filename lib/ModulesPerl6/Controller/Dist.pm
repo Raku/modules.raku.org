@@ -25,6 +25,18 @@ sub raw {
     return $self->_fetch_dist(raw => 1);
 }
 
+sub _dist_auth {
+    my ($dist) = @_;
+    # Sensibly, the META6.json "auth" field often (should?) contains the
+    # source prefix in it, like "auth": "zef:some-user". But not always; the
+    # CPAN modules have "auth" injected as just the PAUSE id, for example.
+    # So the best we can do here is strip the source prefix if it is an
+    # exact match.
+    (my $dist_auth = $dist->{author_id}) =~ s/^$dist->{dist_source}://;
+    $dist_auth = "$dist->{dist_source}:$dist_auth";
+    $dist_auth
+}
+
 sub _fetch_dist {
     my $self = shift;
     my %args = @_;
@@ -50,6 +62,9 @@ sub _fetch_dist {
         and $dists->first->{dist_source} ne 'zef';
 
     my $dist = $dists->first;
+
+    $self->stash(dist_auth => _dist_auth($dist));
+
     my ($files_dir, $files)
     = (from_json $dist->{files})->@{qw/files_dir  files/};
 
