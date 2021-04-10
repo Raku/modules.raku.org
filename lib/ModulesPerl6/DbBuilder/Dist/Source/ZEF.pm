@@ -13,7 +13,7 @@ use List::Util qw/uniq/;
 use ModulesPerl6::DbBuilder::Log;
 use Mew;
 use Mojo::File qw/path/;
-use Mojo::JSON qw/to_json  from_json/;
+use Mojo::JSON qw/from_json/;
 use Mojo::URL;
 use Text::FileTree;
 use experimental 'postderef';
@@ -78,7 +78,6 @@ sub load {
             }
         }
     }
-    $dist->{files} = to_json $dist->{files};
     $dist->{_builder}{post}{no_meta_checker} = 1;
 
     return $dist;

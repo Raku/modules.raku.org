@@ -5,7 +5,6 @@ use File::Spec::Functions qw/catfile  splitdir/;
 use List::UtilsBy qw/uniq_by/;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::DOM;
-use Mojo::JSON qw/from_json/;
 use Mojo::File qw/path/;
 use Mojo::URL;
 use Mojo::Util qw/decode  xml_escape/;
@@ -66,7 +65,7 @@ sub _fetch_dist {
     $self->stash(dist_auth => _dist_auth($dist));
 
     my ($files_dir, $files)
-    = (from_json $dist->{files})->@{qw/files_dir  files/};
+    = ($dist->{files})->@{qw/files_dir  files/};
 
     my $file_prefix = $self->stash('file');
     if (length $file_prefix) {

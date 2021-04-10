@@ -4,6 +4,7 @@ use Carp             qw/croak/;
 use File::Spec::Functions qw/catfile/;
 use FindBin; FindBin->again;
 use Mojo::Collection qw/c/;
+use Mojo::JSON qw/from_json to_json/;
 use Mojo::Util       qw/trim/;
 use ModulesPerl6::Model::Dists::Schema;
 use Mew;
@@ -53,6 +54,7 @@ sub _find {
         # TODO XXX: there got to be a better way to do this?
         $_->{tags}     = [ sort map $_->{tag}{tag}, @{ delete $_->{tag_dists} } ];
         $_->{problems} = [ sort map $_->{problem}, @{ delete $_->{problem_dists} } ];
+        $_->{files} = from_json($_->{files});
         $_->{date_updated_human} = $_->{date_updated}
             ? strftime '%Y-%m-%d', localtime $_->{date_updated} : 'N/A';
         $_
@@ -78,7 +80,7 @@ sub add {
         $dist->{dist_source}     ||= 'unknown';
         $dist->{stargazer_url}   ||= 'unknown';
         $dist->{issue_url}       ||= 'unknown';
-        $dist->{files}           //= '{}';
+        $dist->{files}           //= {};
 
         my $res = $db->resultset('Dist')->update_or_create({
             distro_source => { source      => $dist->{dist_source}     },
@@ -88,9 +90,10 @@ sub add {
                 author_id => $dist->{author_id}, name => $dist->{author_id},
             },
             dist_build_id => { id => $dist->{build_id} },
+            files => to_json($dist->{files}),
             (map +( $_ => $dist->{$_} ),
                 qw/name  meta_url  url  repo_url  description  stars  issues
-                    date_updated  date_added  appveyor_url  files  stargazer_url  issue_url/,
+                    date_updated  date_added  appveyor_url  stargazer_url  issue_url/,
             ),
         });
 
