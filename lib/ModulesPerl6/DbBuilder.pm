@@ -126,10 +126,25 @@ sub _deploy_db {
 
 sub _metas {
     my $self = shift;
-    return
-        ($self->_no_zef  ? () : $self->_zef_metas ),
-        ($self->_no_cpan ? () : $self->_cpan_metas),
-        ($self->_no_p6c  ? () : $self->_p6c_metas );
+
+    my @metas;
+    push @metas, [$self->_zef_metas] unless $self->_no_zef;
+    push @metas, [$self->_cpan_metas] unless $self->_no_cpan;
+    push @metas, [$self->_p6c_metas] unless $self->_no_p6c;
+    return () unless @metas;
+
+    if (my $limit = $self->_limit) {
+        log info => "Limiting build to $limit dists due to explicit request";
+
+        # Ensure we get at least one from each source
+        $limit = int($limit / @metas) + ($limit % @metas ? 1 : 0);
+
+        foreach (@metas) {
+            splice @$_, $limit, @$_;
+        }
+    }
+
+    map {$_->@*} @metas;
 }
 
 sub _cpan_metas {
@@ -235,11 +250,6 @@ sub _zef_metas {
     my @metas = decode_json($raw_data)->@*;
     log info => 'Found ' . +@metas . ' remote dists';
 
-    if ( my $limit = $self->_limit ) {
-        @metas = splice @metas, 0, $limit;
-        log info => "Limiting build to $limit dists due to explicit request";
-    }
-
     my @meta_list;
     my %metav;
     if ($self->_no_rsync) {
@@ -317,11 +327,6 @@ sub _p6c_metas {
 
     my @metas = grep /\S/, map trim($_), split /\n/, $raw_data;
     log info => 'Found ' . @metas . ' dists';
-
-    if ( my $limit = $self->_limit ) {
-        @metas = splice @metas, 0, $limit;
-        log info => "Limiting build to $limit dists due to explicit request";
-    }
 
     # We reverse the list, since users tend to add their modules to the
     # bottom of the list, by reversing it, we can load new modules to the site
