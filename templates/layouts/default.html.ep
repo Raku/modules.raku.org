@@ -44,7 +44,7 @@
             <i class="glyphicon glyphicon-wrench"></i> Create a module</a></li>
           <li class="hidden-sm"><a href="https://github.com/Raku/perl6-most-wanted/blob/master/most-wanted/modules.md">
             <i class="glyphicon glyphicon-star"></i> Most wanted</a></li>
-          <li><a href="https://webchat.freenode.net/?channels=#raku">
+          <li><a href="https://kiwiirc.com/client/irc.libera.chat/#raku">
             <i class="glyphicon glyphicon-user"></i> Chat with us</a></li>
           <li><a href="<%= url_for 'help' %>"
             ><i class="glyphicon glyphicon-question-sign"></i></a></li>
@@ -60,7 +60,7 @@
     <footer>
       <hr>
       <p>For feedback and patches, please contact us through the
-        <a href="https://webchat.freenode.net/?channels=#raku">#raku IRC
+        <a href="https://kiwiirc.com/client/irc.libera.chat/#raku">#raku IRC
         channel</a>, or send an email to the perl6-compiler@perl.org mailing
         list.
       </p>
