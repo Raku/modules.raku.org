@@ -19,8 +19,8 @@ sub process {
         and not $dist->{_builder}{is_fresh} and not $ENV{FULL_REBUILD}
         and not ($dist->{travis_status}//'') =~ /\A(unknown|pending)\z/;
 
-    my $has_travis = ($dist->{_builder}{files} || [])->@*
-        ? (grep $_->{name} eq '.travis.yml', $dist->{_builder}{files}->@*)
+    my $has_travis = defined($dist->{files}{files}{'.travis.yml'})
+        ? 1
         : ($dist->{travis_status} and $dist->{travis_status} ne 'not set up');
 
     unless ($has_travis) {

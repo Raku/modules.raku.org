@@ -62,13 +62,14 @@ sub _load_from_source {
         )->load or return;
         $dist->{build_id} = $self->_build_id;
 
+        $self->_fill_from_github($dist);
+
         for my $postprocessor ( $self->_postprocessors ) {
             $postprocessor->new(
                 meta_url => $url,
                 dist     => $dist,
             )->process;
         }
-        $self->_fill_from_github($dist);
 
         delete $dist->{_builder};
         return $dist;
@@ -86,6 +87,8 @@ sub _fill_from_github {
 
     if ($dist->{repo_url} =~ m#(?<protocol>[^/]+)://github.com/(?<user>[^/]+)/(?<repo>[^/]+).git#) {
 
+        $dist->{_builder}->@{qw/repo_user  repo/} = ( $+{user}, $+{repo} );
+
         my $pithub = Pithub->new(
             user  => $+{user},
             repo  => $+{repo},
@@ -97,7 +100,7 @@ sub _fill_from_github {
         );
 
         my $repo = $self->_repo($pithub->repos->get) or return;
-        $dist->{stars} = $repo->{stargazers_count};
+        $dist->{stars} = $repo->{stargazers_count} // 0;
         $dist->{issues} = $repo->{open_issues_count};
         $dist->{stargazer_url} = $repo->{html_url} . '/stargazers';
         $dist->{issue_url} = $repo->{html_url} . '/issues';

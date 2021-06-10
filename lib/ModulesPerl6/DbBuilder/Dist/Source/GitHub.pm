@@ -113,6 +113,12 @@ sub load {
         map $_->{size}, grep $_->{path} eq 'logotype/logo_32x32.png', @$tree
     );
 
+    $dist->{files} = {
+        files     => Text::FileTree->new->parse(
+            join "\n", map { $_->{path} } @$tree
+        ),
+    };
+
     $dist->{_builder}{files} = [
         map +{ url => $_->{url}, name => $_->{path} },
             grep $_->{type} eq 'blob', @$tree

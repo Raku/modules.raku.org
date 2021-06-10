@@ -19,9 +19,14 @@ sub process {
         and not $dist->{_builder}{is_fresh} and not $ENV{FULL_REBUILD}
         and not ($dist->{appveyor_status}//'') =~ /\A(unknown|pending)\z/;
 
-    my $has_appveyor = ($dist->{_builder}{files} || [])->@*
-        ? (grep $_->{name} =~ /\A \.? appveyor\.yml \z/x,
-            $dist->{_builder}{files}->@*)
+    my $has_travis = defined($dist->{files}{files}{'.travis.yml'})
+        ? 1
+        : ($dist->{travis_status} and $dist->{travis_status} ne 'not set up');
+
+    my $has_appveyor =
+        (    $dist->{files}{files}{'.appveyor.yml'}
+          || $dist->{files}{files}{'appveyor.yml'})
+        ? 1
         : ($dist->{appveyor_status}
             and $dist->{appveyor_status} ne 'not set up');
 
