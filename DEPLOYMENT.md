@@ -128,7 +128,7 @@ $ perl build-project-list.pl --limit=10
 
 Simply launch the `morbo` script. The server will be launched to listen on port `3333`:
 ```bash
-$ ./morbo
+$ bin/morbo
 Server available at http://127.0.0.1:3333
 ```
 
